@@ -1,23 +1,29 @@
-# 发布npm模块的基础模板
-发布npm模块的基础模板，npm模块支持es6语法，支持测试模块，支持一键发布
+# 基于Typescript的npm模块发布基础模板
+发布npm模块的基础模板，支持Typescript语法，支持测试模块，支持自动升级版本、更新changelog文件
 
 ## npm命令
+### npm run start
+运行npm项目。
 ### npm run build
-构建npm项目。通过BABEL对es6语法进行降级处理，通过webpack对项目进行打包，打包后的文件输出到/lib目录下。
-### npm run lint
+构建npm项目。通过webpack对项目进行打包，打包后的文件输出到/dist目录下。
+### npm run eslint
 通过eslint进行语法检测。
 ### npm run test
 通过mocha进行单元测试。
-### npm run toFirst
-首次进行npm发布的时候执行这个命令。
-### npm run toPreview
-发布一个npm包的预览版本
-### npm run toPatch
-发布一个npm包的补丁版本
-### npm run toMinor
-发布一个npm包的次要版本
-### npm run Major
-发布一个npm包的主要版本
+### npm run release
+自动发布项目、更新版本、更新changelog文件、更新tag号。
+### npm run release:first
+首次发布项目，生成changelog文件。
+### npm run release:alpha
+发布内测版代码。
+### npm run release:beta
+发布公测版代码。
+### npm run release:patch
+发布补丁。
+### npm run release:minor
+发布次要版本。
+### npm run release:major
+发布主要版本。
 
 ## Installation
 运用此模板编写npm包，再发布之前完善安装命令。
