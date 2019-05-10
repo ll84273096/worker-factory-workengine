@@ -1,0 +1,51 @@
+{
+  "name": "base-npm-ts",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [
+    "typescript"
+  ],
+  "author": "newton",
+  "homepage": "https://github.com/ll84273096/base-npm-ts",
+  "repository": "https://github.com/ll84273096/base-npm-ts",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "bugs": {
+    "url": "https://github.com/ll84273096/base-npm-ts/issues",
+    "email": "ll84273096@sina.com"
+  },
+  "scripts": {
+    "start": "webpack --mode development --config build/webpack.conf.js --progress --colors --watch",
+    "build": "webpack --mode production --config build/webpack.conf.js",
+    "eslint": "eslint ts --ext .ts",
+    "test": "mocha",
+    "release": "standard-version",
+    "release:first": "npm run release:before && npm run release -- -f",
+    "release:alpha": "npm run release:before && npm run release -- -p alpha",
+    "release:beta": "npm run release:before && npm run release -- -p beta",
+    "release:patch": "npm run release:before && npm run release -- -r patch",
+    "release:minor": "npm run release:before && npm run release -- -r minor",
+    "release:major": "npm run release:before && npm run release -- -r major",
+    "release:before": "npm run  eslint"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "babel-eslint": "^10.0.1",
+    "clean-webpack-plugin": "^2.0.2",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-alloy": "^2.0.0-alpha.2",
+    "standard-version": "^4.3.0",
+    "ts-loader": "^6.0.0",
+    "typescript": "^3.4.5",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.2"
+  },
+  "dependencies": {},
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
