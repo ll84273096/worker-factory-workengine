@@ -10,6 +10,7 @@ module.exports = {
         // $: false
     },
     rules: {
+        '@typescript-eslint/explicit-member-accessibility': [{ accessibility: 'no-public' }],
         // 这里填入你的项目需要的个性化配置，比如：
         //
         // // 一个缩进必须用两个空格替代

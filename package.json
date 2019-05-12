@@ -18,7 +18,7 @@
     "start": "webpack --mode development --config build/webpack.conf.js --progress --colors --watch",
     "build": "webpack --mode production --config build/webpack.conf.js",
     "eslint": "eslint ts --ext .ts",
-    "test": "mocha -r ts-node/register ./test/*test.ts --colors",
+    "test": "mocha -r ts-node/register ./test/**/*test.ts --colors",
     "release": "standard-version",
     "release:first": "npm run release:before && npm run release -- -f",
     "release:alpha": "npm run release:before && npm run release -- -p alpha",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/events": "^3.0.0",
     "@types/mocha": "^5.2.6",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "babel-eslint": "^10.0.1",
@@ -47,7 +48,9 @@
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "events": "^3.0.0"
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
