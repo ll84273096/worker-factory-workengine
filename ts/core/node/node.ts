@@ -78,6 +78,8 @@ class Node {
         arrNodeList.splice(_index, 0, ...nodes);
     }
 
+    private _addListenerTo
+
 }
 
 export default Node;
