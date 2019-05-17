@@ -1,85 +1,65 @@
 import { EventEmitter } from 'events';
 import { getGUID } from '../../utils';
-// import Event from '../event';
-// import { Event as NodeEvent } from './constant';
-import { NodeEvent } from '../event';
+// eslint-disable-next-line no-unused-vars
+import Processor from '../Processor';
 
-interface NodeOptions {
-    name?: string;
-}
 
-const DEFAULT_OPTIONS: NodeOptions = {
-    name: 'node'
-};
+abstract class Node {
 
-class Node {
+    protected DEFAULT_NAME = '_NODE_';
     private _id: string = getGUID();
-    private _name: string = '';
-    private _options: NodeOptions;
-    private _arrNextNodeList: Node[] = [];
-    private _arrPrevNodeList: Node[] = [];
+    private _processor: Processor;
     private _event: EventEmitter;
+    private _isDestroy: boolean;
 
-    constructor(options: NodeOptions = {}) {
-        this._options = {
-            ...DEFAULT_OPTIONS,
-            ...options
-        };
-        this._name = this._options.name;
+    constructor() {
+        // this._options = options;
         this._event = new EventEmitter();
+        this._isDestroy = false;
     }
 
-    getId(): string {
+    get id(): string {
         return this._id;
     }
 
-    getName(): string {
-        return this._name;
+    get name(): string {
+        return this.DEFAULT_NAME;
     }
 
-    addListener(type: NodeEvent, listener: (...args: any[]) => void): void {
-        this._event.addListener(type.toString(), listener);
+    get isDestroy(): boolean {
+        return this._isDestroy;
     }
 
-    removeListener(type: NodeEvent, listener: () => {}): void {
-        this._event.removeListener(type.toString(), listener);
+    run(...args: any[]): Promise<any> {
+        let promise: Promise<any> = this._processor ? this._processor.run(...args) : Promise.resolve();
+        return promise;
     }
 
-    removeAllListeners(type?: NodeEvent): void {
-        this._event.removeAllListeners(type.toString());
+    destroy() {
+        this._event.removeAllListeners();
+        this._isDestroy = true;
+        console.log('The instance of line has been destroyed');
     }
 
-    addNextNode(node: Node, index?: number): Node {
-        this._addNodes(this._arrNextNodeList, [node], index);
-        this._event.emit(NodeEvent.ADD_NEXT_NODE, 'add_node');
-        return this;
+    addListener(type: string, listener: (...args: any[]) => void) {
+        this._event.addListener(type, listener);
     }
 
-    addNextNodes(nodes: Node[], index?: number): Node {
-        this._addNodes(this._arrNextNodeList, nodes, index);
-        return this;
+    removeListener(type: string, listener: () => {}): void {
+        this._event.removeListener(type, listener);
     }
 
-    addPrevNode(node: Node, index?: number): Node {
-        this._addNodes(this._arrPrevNodeList, [node], index);
-        return this;
+    removeAllListeners(type?: string): void {
+        this._event.removeAllListeners(type);
     }
 
-    addPrevNodes(nodes: Node[], index?: number): Node {
-        this._addNodes(this._arrPrevNodeList, nodes, index);
-        return this;
+    triggerEvent(type: string, event: Event) {
+        this._event.emit(type, event);
     }
 
-    private _addNodes(arrNodeList: Node[], nodes: Node[], index: number): void {
-        let _index: number = index;
-        if (_index === null && typeof _index === 'undefined') {
-            _index = arrNodeList.length;
-        }
-        arrNodeList.splice(_index, 0, ...nodes);
+    protected getEvent(): EventEmitter {
+        return this._event;
     }
-
-    private _addListenerTo
-
 }
 
 export default Node;
