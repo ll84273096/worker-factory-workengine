@@ -1,45 +1,13 @@
 import { EventEmitter } from 'events';
+// eslint-disable-next-line no-unused-vars
 import Line from '../line';
+// eslint-disable-next-line no-unused-vars
 import Node from '../node';
-import NextEvent from './event';
 import { getGUID } from '../../utils';
 
-// export class Deferred<T> implements Promise<T> {
+class Next<T> implements Promise<T> {
 
-//     [Symbol.toStringTag]: 'Promise';
-//     private _resolveSelf: { (value?: T | PromiseLike<T>): void; (arg0: T): void };
-//     private _rejectSelf: { (reason?: any): void; (arg0: any): void };
-//     private promise: Promise<T>
-
-//     constructor() {
-//         this.promise = new Promise((resolve, reject) =>
-//         {
-//             this._resolveSelf = resolve;
-//             this._rejectSelf = reject;
-//         });
-//     }
-
-//     then<TResult1 = T, TResult2 = never>(
-//         onfulfilled?: ((value: T) =>
-//         TResult1 | PromiseLike<TResult1>) | undefined | null,
-//         onrejected?: ((reason: any) =>
-//         TResult2 | PromiseLike<TResult2>) | undefined | null
-//     ): Promise<TResult1 | TResult2> {
-//         return this.promise.then(onfulfilled, onrejected);
-//     }
-
-//     catch<TResult = never>(onrejected?: ((reason: any) =>
-//     TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult> {
-//         return this.promise.then(onrejected);
-//     }
-
-//     resolve(val: T) { this._resolveSelf(val) }
-//     reject(reason: any) { this._rejectSelf(reason) }
-// }
-
-class Next implements Promise<any> {
-
-    static perform(line: Line): Next {
+    static perform(line: Line): Next<any> {
         return new Next(line);
     }
 
@@ -50,7 +18,7 @@ class Next implements Promise<any> {
     private _line: Line;
     private _index: number;
     private _prevArgs: any[];
-    private _promise: Promise<any>;
+    private _promise: Promise<T>;
     private _resolve: (...args: any[]) => void;
     private _reject: (error: Error) => void;
 
@@ -74,8 +42,8 @@ class Next implements Promise<any> {
         return this._index;
     }
 
-    then<TResult1 = any, TResult2 = never>(
-        onfulfilled?: ((value: any) =>
+    then<TResult1 = T, TResult2 = never>(
+        onfulfilled?: ((value: T) =>
         TResult1 | PromiseLike<TResult1>) | undefined | null,
         onrejected?: ((reason: any) =>
         TResult2 | PromiseLike<TResult2>) | undefined | null
@@ -92,7 +60,7 @@ class Next implements Promise<any> {
         return this._promise.finally(onfinally);
     }
 
-    resolve(val: any) {
+    resolve(val: T) {
         this._resolve(val);
     }
 
@@ -100,7 +68,7 @@ class Next implements Promise<any> {
         this._reject(reason);
     }
 
-    run(...args: any[]): Next {
+    run(...args: any[]): Next<T> {
         setTimeout(() => {
             this._run(0, ...args);
         });
