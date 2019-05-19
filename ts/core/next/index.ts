@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import Line from '../line';
 // eslint-disable-next-line no-unused-vars
 import Node from '../node';
+import NextEvent from './event';
 import { getGUID } from '../../utils';
 
 class Next<T> implements Promise<T> {
@@ -21,6 +22,7 @@ class Next<T> implements Promise<T> {
     private _promise: Promise<T>;
     private _resolve: (...args: any[]) => void;
     private _reject: (error: Error) => void;
+    private _isPaused: boolean;
 
     private constructor(line: Line) {
         this._promise = new Promise((resolve, reject) => {
@@ -32,6 +34,7 @@ class Next<T> implements Promise<T> {
         this._line = line;
         this._index = 0;
         this._prevArgs = [];
+        this._isPaused = false;
     }
 
     get id(): string {
@@ -75,27 +78,69 @@ class Next<T> implements Promise<T> {
         return this;
     }
 
+    pause(): Next<T> {
+        this._isPaused = true;
+        return this;
+    }
+
+    continue(): Next<T> {
+        this._isPaused = false;
+        this._run(this._index, ...this._prevArgs);
+        return this;
+    }
+
+    onNext(): Next<T> {
+        return this;
+    }
+
+    onPause(): Next<T> {
+        return this;
+    }
+
+    onContinue(): Next<T> {
+        return this;
+    }
+
+    onStop(): Next<T> {
+        return this;
+    }
+
+    onChange(): Next<T> {
+        return this;
+    }
+
+    private _onChange(type: string) {
+        let event: NextEvent;
+        switch (type) {
+            case NextEvent.ON_NEXT:
+                event = new NextEvent(NextEvent.name, this, {});
+        }
+    }
+
     private _run(index: number = 0, ...args: any[]) {
         const currentNode: Node = this._line.getNodeByIndex(index);
-        if (currentNode) {
-            currentNode.run(...args).then((...args: any[]) => {
+        if (!this._isPaused) {
+            if (currentNode) {
+                currentNode.run(...args).then((...args: any[]) => {
+                    this._index++;
+                    if (this._index > this._line.length) {
+                        this._resolve(...args);
+                    } else {
+                        this._run(this._index, args);
+                    }
+                }).catch((error: Error) => {
+                    this._reject(error);
+                });
+            } else if (this._line.length === 0 || this.index >= this._line.length - 1) {
+                this._resolve(...args);
+            } else if (this.index >= this._line.length - 1) {
+                this._resolve(...this._prevArgs);
+            } else {
                 this._index++;
-                if (this._index > this._line.length) {
-                    this._resolve(...args);
-                } else {
-                    this._run(this._index, args);
-                }
-            }).catch((error: Error) => {
-                this._reject(error);
-            });
-        } else if (this._line.length === 0 || this.index >= this._line.length - 1) {
-            this._resolve(...args);
-        } else if (this.index >= this._line.length - 1) {
-            this._resolve(...this._prevArgs);
-        } else {
-            this._index++;
-            this._run(this._index, ...this._prevArgs);
+                this._run(this._index, ...this._prevArgs);
+            }
         }
+
         this._prevArgs = args;
     }
 }
