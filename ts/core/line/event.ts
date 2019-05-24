@@ -1,4 +1,4 @@
-import { Event } from '../node';
+import Event from '../event';
 
 class LineEvent extends Event {
     static readonly ADD_NODE = 'ADD_NODE';

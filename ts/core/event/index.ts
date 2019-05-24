@@ -1,12 +1,14 @@
-import { EventEmitter } from 'events';
-
-export enum NodeEvent {
-    ADD_NEXT_NODE= 'ADD_NEXT_NODE',
-    ADD_PREV_NODE= 'ADD_PREV_NODE'
+class Event {
+    readonly timestamp: number;
+    readonly type: string;
+    readonly target: any;
+    readonly data: {[key: string]: any};
+    constructor(type: string, target: any, data: {[key: string]: any}) {
+        this.type = type;
+        this.target = target;
+        this.data = data;
+        this.timestamp = new Date().getTime();
+    }
 }
 
-const event = new EventEmitter();
-
-
-
-export default EventEmitter;
+export default Event;

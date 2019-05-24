@@ -11,9 +11,11 @@ abstract class Node {
     private _processor: Processor;
     private _event: EventEmitter;
     private _isDestroy: boolean;
+    private _handler: (data: any) => Promise<any>;
 
-    constructor() {
+    constructor(handler?: (data: any) => Promise<any>) {
         // this._options = options;
+        this._handler = handler;
         this._event = new EventEmitter();
         this._isDestroy = false;
     }
@@ -30,8 +32,30 @@ abstract class Node {
         return this._isDestroy;
     }
 
-    run(...args: any[]): Promise<any> {
-        let promise: Promise<any> = this._processor ? this._processor.run(...args) : Promise.resolve();
+    run(data: any): Promise<any> {
+        let promise: Promise<any> = Promise.resolve(data);
+        if (this._handler === null || typeof this._handler === 'undefined') {
+            promise = Promise.resolve(data);
+        } else {
+            promise = this._handler(data);
+        }
+        return promise;
+
+        // let promise: Promise<any>;
+        // let retrunValue: any;
+        // if (typeof this._handler === 'function') {
+        //     const returnvalue: any = this._handler(data);
+        //     if (retrunValue instanceof Promise) {
+        //         promise = returnvalue;
+        //     } else {
+        //         promise = Promise.resolve(returnvalue);
+        //     }
+        // } else if (['number', 'string', 'booleam'].includes(typeof this._handler)) {
+        //     promise = Promise.resolve(this._handler);
+        // } else {
+        //     promise = Promise.resolve(data);
+        // }
+        // let promise: Promise<any> = this._processor ? this._processor.run(data) : Promise.resolve(data);
         return promise;
     }
 
