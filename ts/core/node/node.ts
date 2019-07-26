@@ -33,29 +33,12 @@ abstract class Node {
     }
 
     run(data: any): Promise<any> {
-        let promise: Promise<any> = Promise.resolve(data);
+        let promise: Promise<any>;
         if (this._handler === null || typeof this._handler === 'undefined') {
             promise = Promise.resolve(data);
         } else {
             promise = this._handler(data);
         }
-        return promise;
-
-        // let promise: Promise<any>;
-        // let retrunValue: any;
-        // if (typeof this._handler === 'function') {
-        //     const returnvalue: any = this._handler(data);
-        //     if (retrunValue instanceof Promise) {
-        //         promise = returnvalue;
-        //     } else {
-        //         promise = Promise.resolve(returnvalue);
-        //     }
-        // } else if (['number', 'string', 'booleam'].includes(typeof this._handler)) {
-        //     promise = Promise.resolve(this._handler);
-        // } else {
-        //     promise = Promise.resolve(data);
-        // }
-        // let promise: Promise<any> = this._processor ? this._processor.run(data) : Promise.resolve(data);
         return promise;
     }
 
