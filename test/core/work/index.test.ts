@@ -20,4 +20,53 @@ describe('Test work module', function() {
             done();
         });
     });
+
+    it('Adding multiple actions to work', function(done) {
+        // const data: ActionDeliveryData = new ActionDeliveryData();
+        const action1: Action = new Action(async (data: ActionDeliveryData) => {
+            data.setData('test.count', 0);
+            // data.setData({ count: 0 });
+        });
+        const action2: Action = new Action(async (data: ActionDeliveryData) => {
+            const count = data.getData('test.count');
+            data.returnData = { count: count + 1 };
+        });
+        const work: Work = new Work();
+        work.addAction(action1).addAction(action2).start().then((result) => {
+            const { count } = result;
+            expect(count).to.be.equal(1);
+            done();
+        });
+    });
+
+    it('Test path in delivery data', function(done) {
+        // const data: ActionDeliveryData = new ActionDeliveryData();
+        const ids: string[] = [];
+        const action1: Action = new Action(async (data: ActionDeliveryData) => {});
+        ids.push(action1.id);
+        const action2: Action = new Action(async (data: ActionDeliveryData) => {
+            data.returnData = { path: data.path };
+        });
+        ids.push(action2.id);
+        const work: Work = new Work();
+        work.addAction(action1).addAction(action2).start().then((result) => {
+            const { path } = result;
+            // expect(path).to.be.equal(1);
+            expect(path).to.deep.equal(ids);
+            done();
+        });
+    });
+
+    it('Test path index in delivery data', function(done) {
+        // const data: ActionDeliveryData = new ActionDeliveryData();
+        const ids: string[] = [];
+        const action1: Action = new Action(async (data: ActionDeliveryData) => {});
+        ids.push(action1.id);
+        const action2: Action = new Action(async (data: ActionDeliveryData) => {
+            data.returnData = { path: data.path };
+        });
+        ids.push(action2.id);
+        const work: Work = new Work();
+        work.addAction(action1).addAction(action2).start();
+    });
 });

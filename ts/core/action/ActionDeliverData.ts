@@ -1,9 +1,11 @@
+import * as dotProp from 'dot-prop';
 class ActionDeliveryData {
 
     private _data: { [key: string]: any };
     private _startData: { [key: string]: any };
     private _returnData: { [key: string]: any };
-    private _path: any[] = [];
+    private _path: any[];
+    private _pathIndex: number;
 
     constructor(data: { [key: string]: any } = {}) {
         this._data = { ...data };
@@ -29,21 +31,39 @@ class ActionDeliveryData {
         return this._returnData;
     }
 
-    addPath(path: any) {
-        this._path.push(path);
+    set path(path: string[]) {
+        if (!this._path) {
+            this._path = path;
+        }
     }
 
-    getPath(): any[] {
+    get path(): string[] {
         return this._path;
     }
 
-    setData(data: { [key: string]: any }) {
-        this._data = { ...this._data, ...data };
+    set pathIndex(index: number) {
+        this._pathIndex = index;
+    }
+
+    get pathIndex(): number {
+        return this._pathIndex;
+    }
+
+    // addPath(path: any) {
+    //     this._path.push(path);
+    // }
+
+    // getPath(): any[] {
+    //     return this._path;
+    // }
+
+    setData(key: string, value: any) {
+        dotProp.set(this._data, key, value);
         return this;
     }
 
     getData(key: string): any {
-        return this._data[key];
+        return dotProp.get(this._data, key);
     }
 }
 

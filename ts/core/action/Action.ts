@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+import { getGUID } from '../../utils/index';
+// eslint-disable-next-line no-unused-vars
 import ActionDeliveryData from './ActionDeliverData';
 
 export type IRunner = (data: ActionDeliveryData) => Promise<any>;
@@ -17,10 +18,16 @@ class Action {
 
     protected options: IActionOptions;
     private _runner: IRunner;
+    private _id: string;
 
     constructor(runner: IRunner, options: IActionOptions = DEFAULT_OPTIONS) {
         this._runner = runner;
         this.options = options;
+        this._id = getGUID();
+    }
+
+    get id(): string {
+        return this._id;
     }
 
     async start(data: ActionDeliveryData): Promise<any> {
