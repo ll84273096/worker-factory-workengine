@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { getGUID } from '../../utils/index';
 import Action, { ActionDeliveryData, IRunner, IActionOptions } from '../action';
 
 class Work {
@@ -29,9 +30,21 @@ class Work {
                 try {
                     // actionDeliveryData.addPath(currentAction);
                     // 注入actionDeliverData
+                    actionDeliveryData.seek = null;
                     actionDeliveryData.pathIndex = index;
-                    await currentAction.start(actionDeliveryData);
-                    index++;
+                    const pathIndexLockKey = actionDeliveryData.lock(ActionDeliveryData.LOCK_KEY.PATH_INDEX);
+                    const prevDataLockKey = actionDeliveryData.lock(ActionDeliveryData.LOCK_KEY.PREV_DATA);
+                    const prevData = await currentAction.start(actionDeliveryData);
+                    actionDeliveryData.unlock(ActionDeliveryData.LOCK_KEY.PATH_INDEX, pathIndexLockKey);
+                    actionDeliveryData.unlock(ActionDeliveryData.LOCK_KEY.PREV_DATA, prevDataLockKey);
+                    actionDeliveryData.prevData = prevData;
+
+                    const seekIndex = this._getIndexByAnchor(actionDeliveryData.seek);
+                    if (seekIndex > -1) {
+                        index = seekIndex;
+                    } else {
+                        index++;
+                    }
                     currentAction = this._actions[index];
                 } catch (error) {
                     currentAction = null;
@@ -40,6 +53,16 @@ class Work {
             }
             resolve(actionDeliveryData.returnData);
         })());
+    }
+
+    private _getIndexByAnchor(anchor: string | number): number {
+        let index = -1;
+        if (typeof anchor === 'string') {
+            index = this._actions.findIndex((action: Action) => action.anchor === anchor);
+        } else if (typeof anchor === 'number') {
+            index = anchor < 0 ? -1 : anchor;
+        }
+        return index;
     }
 }
 

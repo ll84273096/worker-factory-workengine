@@ -5,6 +5,7 @@ import ActionDeliveryData from './ActionDeliverData';
 export type IRunner = (data: ActionDeliveryData) => Promise<any>;
 
 export interface IActionOptions {
+    anchor?: string;
     timeout?: number;
     isIgnoreError?: boolean;
 }
@@ -28,6 +29,10 @@ class Action {
 
     get id(): string {
         return this._id;
+    }
+
+    get anchor(): string {
+        return this.options && this.options.anchor;
     }
 
     async start(data: ActionDeliveryData): Promise<any> {
