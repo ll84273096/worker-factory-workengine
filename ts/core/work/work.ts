@@ -1,21 +1,32 @@
-/* eslint-disable no-unused-vars */
-import { getGUID } from '../../utils/index';
+import * as uuid from 'uuid/v4';
+// eslint-disable-next-line no-unused-vars
 import Action, { ActionDeliveryData, IRunner, IActionOptions } from '../action';
 
 class Work {
 
-    static createAction(runner: IRunner, options?: IActionOptions): Action {
-        return new Action(runner, options);
+    static getWork(): Work {
+        return new Work();
     }
 
+    private _id: string = uuid();
     private _actions: Action[] = [];
     private _actionPath: string[] = [];
     private _actionMapping: {[key: string]: any} = {};
 
-    addAction(action: Action): Work {
-        this._actions.push(action);
-        this._actionPath.push(action.id);
-        this._actionMapping[action.id] = action;
+    get id(): string {
+        return this._id;
+    }
+
+    addAction(action: Action | IRunner, options?: IActionOptions): Work {
+        let actionInstance;
+        if (action instanceof Action) {
+            actionInstance = action;
+        } else {
+            actionInstance = new Action(action, options);
+        }
+        this._actions.push(actionInstance);
+        this._actionPath.push(actionInstance.id);
+        this._actionMapping[actionInstance.id] = actionInstance;
         return this;
     }
 
@@ -32,13 +43,12 @@ class Work {
                     // 注入actionDeliverData
                     actionDeliveryData.seek = null;
                     actionDeliveryData.pathIndex = index;
-                    const pathIndexLockKey = actionDeliveryData.lock(ActionDeliveryData.LOCK_KEY.PATH_INDEX);
-                    const prevDataLockKey = actionDeliveryData.lock(ActionDeliveryData.LOCK_KEY.PREV_DATA);
+                    const pathIndexLockKey = actionDeliveryData.lock(ActionDeliveryData.DEFAULT_PROPS.PATH_INDEX);
+                    const prevDataLockKey = actionDeliveryData.lock(ActionDeliveryData.DEFAULT_PROPS.PREV_DATA);
                     const prevData = await currentAction.start(actionDeliveryData);
-                    actionDeliveryData.unlock(ActionDeliveryData.LOCK_KEY.PATH_INDEX, pathIndexLockKey);
-                    actionDeliveryData.unlock(ActionDeliveryData.LOCK_KEY.PREV_DATA, prevDataLockKey);
+                    actionDeliveryData.unlock(ActionDeliveryData.DEFAULT_PROPS.PATH_INDEX, pathIndexLockKey);
+                    actionDeliveryData.unlock(ActionDeliveryData.DEFAULT_PROPS.PREV_DATA, prevDataLockKey);
                     actionDeliveryData.prevData = prevData;
-
                     const seekIndex = this._getIndexByAnchor(actionDeliveryData.seek);
                     if (seekIndex > -1) {
                         index = seekIndex;

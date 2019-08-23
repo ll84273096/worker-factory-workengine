@@ -1,4 +1,4 @@
-import { getGUID } from '../../utils/index';
+import * as uuid from 'uuid/v4';
 // eslint-disable-next-line no-unused-vars
 import ActionDeliveryData from './ActionDeliverData';
 
@@ -23,8 +23,8 @@ class Action {
 
     constructor(runner: IRunner, options: IActionOptions = DEFAULT_OPTIONS) {
         this._runner = runner;
-        this.options = options;
-        this._id = getGUID();
+        this.options = { ...DEFAULT_OPTIONS, ...options };
+        this._id = uuid();
     }
 
     get id(): string {

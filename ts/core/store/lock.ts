@@ -1,16 +1,14 @@
 import * as dotProp from 'dot-prop';
-import { getGUID } from './common';
+import * as uuid from 'uuid/v4';
 
 class Lock {
 
-    private _map: {[key: string]: string} = {};
-    private _arr: string[] = [];
     private _data: {[key: string]: string} = {};
 
     lock(name: string): string {
         let lockKey;
         if (name && !this.isLock(name) && !this.isParentLock(name)) {
-            lockKey = getGUID();
+            lockKey = uuid();
             dotProp.set(this._data, name, lockKey);
         }
         return lockKey;

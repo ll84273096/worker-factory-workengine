@@ -14,9 +14,19 @@ describe('Test work module', function() {
             data.returnData = { ...data.startData };
         });
         const work: Work = new Work();
-        work.addAction(action).start({ x: 0 }).then((result) => {
+        work.addAction(action).start({ x: 1 }).then((result) => {
             const { x } = result;
-            expect(x).to.be.equal(0);
+            expect(x).to.be.equal(1);
+            done();
+        });
+    });
+
+    it('Test the method addAction in Work', function(done) {
+        const result: number[] = [];
+        Work.getWork().addAction(async (data: ActionDeliveryData) => {
+            result.push(data.startData);
+        }).start(0).then(() => {
+            expect(result).to.be.deep.equal([0]);
             done();
         });
     });
@@ -39,6 +49,17 @@ describe('Test work module', function() {
         });
     });
 
+    it('Test start data in delivery data', function(done) {
+        const result: number[] = [];
+        const action: Action = new Action(async (data: ActionDeliveryData) => {
+            result.push(data.startData);
+        });
+        new Work().addAction(action).start(0).then(() => {
+            expect(result).to.be.deep.equal([0]);
+            done();
+        });
+    });
+
     it('Test path in delivery data', function(done) {
         // const data: ActionDeliveryData = new ActionDeliveryData();
         const ids: string[] = [];
@@ -57,36 +78,42 @@ describe('Test work module', function() {
     });
 
     it('Test path index in delivery data', function(done) {
-        const action1: Action = new Action(async (data: ActionDeliveryData) => {});
+        const result: number[] = [];
+        const action1: Action = new Action(async (data: ActionDeliveryData) => {
+            result.push(data.pathIndex);
+        });
         const action2: Action = new Action(async (data: ActionDeliveryData) => {
-            expect(data.pathIndex).to.be.equal(1);
+            result.push(data.pathIndex);
+        });
+        new Work().addAction(action1).addAction(action2).start().then(() => {
+            expect(result).to.be.deep.equal([0, 1]);
             done();
         });
-        new Work().addAction(action1).addAction(action2).start();
     });
 
-    it('Test prev data in delivery data', function(done) {
+    it('Test prevData in delivery data', function(done) {
         const action1: Action = new Action(async (data: ActionDeliveryData) => {
             return 0;
         });
         const action2: Action = new Action(async (data: ActionDeliveryData) => {
             expect(data.prevData).to.be.equal(0);
-            data.prevData = 100;
             return 1;
         });
-        const action3: Action = new Action(async (data: ActionDeliveryData)  => {
+        const action3: Action = new Action(async (data: ActionDeliveryData) => {
             expect(data.prevData).to.be.equal(1);
             done();
         });
         new Work().addAction(action1).addAction(action2).addAction(action3).start();
     });
 
-    it('Test PrevData lock in delivery data', function(done) {
+    it('Test returnData in delivery data', function(done) {
         const action: Action = new Action(async (data: ActionDeliveryData) => {
-            expect(data.isLock(ActionDeliveryData.LOCK_KEY.PREV_DATA)).to.be.equal(true);
+            data.returnData = 1;
+        });
+        new Work().addAction(action).start().then((result) => {
+            expect(result).to.be.equal(1);
             done();
         });
-        new Work().addAction(action).start();
     });
 
     it('Test seek by number in delivery data', function(done) {
@@ -101,16 +128,42 @@ describe('Test work module', function() {
         });
         const action3: Action = new Action(async (data: ActionDeliveryData) => {
             arr.push(2);
-            if (key) {
-                expect(arr).to.deep.equal([0, 2, 1, 2]);
-                done();
-            }
             if (!key) {
                 data.seek = 1;
                 key = true;
             }
         });
-        new Work().addAction(action1).addAction(action2).addAction(action3).start();
+        new Work().addAction(action1).addAction(action2).addAction(action3).start().then((result) => {
+            expect(arr).to.deep.equal([0, 2, 1, 2]);
+            done();
+        });
+    });
+
+    it('Test seek by anchor in delivery data', function(done) {
+        let key = false;
+        const arr: number[] = [];
+        const action1: Action = new Action(async (data: ActionDeliveryData) => {
+            arr.push(0);
+            data.seek = 'anchor2';
+        });
+        const action2: Action = new Action(async (data: ActionDeliveryData) => {
+            arr.push(1);
+        }, {
+            anchor: 'anchor1'
+        });
+        const action3: Action = new Action(async (data: ActionDeliveryData) => {
+            arr.push(2);
+            if (!key) {
+                data.seek = 'anchor1';
+                key = true;
+            }
+        }, {
+            anchor: 'anchor2'
+        });
+        new Work().addAction(action1).addAction(action2).addAction(action3).start().then((result) => {
+            expect(arr).to.deep.equal([0, 2, 1, 2]);
+            done();
+        });
     });
 
 });

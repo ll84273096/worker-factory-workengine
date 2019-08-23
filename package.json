@@ -33,6 +33,7 @@
     "@types/events": "^3.0.0",
     "@types/extend": "^3.0.1",
     "@types/mocha": "^5.2.6",
+    "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
@@ -52,7 +53,8 @@
   "dependencies": {
     "dot-prop": "^5.1.0",
     "events": "^3.0.0",
-    "extend": "^3.0.2"
+    "extend": "^3.0.2",
+    "uuid": "^3.3.3"
   },
   "config": {
     "commitizen": {
