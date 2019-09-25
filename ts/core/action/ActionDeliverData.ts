@@ -11,12 +11,6 @@ class ActionDeliveryData extends DeliveryData {
         SEEK: createDefaultPropsKey('seek')
     };
 
-    private _seek: string | number;
-
-    constructor(data: { [key: string]: any } = {}) {
-        super();
-    }
-
     set startData(data: any) {
         this.setDefaultData(ActionDeliveryData.DEFAULT_PROPS.START_DATA, data, true);
         // this._setDataOnce(DEFAULT_PROPS.START_DATA, data);

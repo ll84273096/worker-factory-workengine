@@ -21,6 +21,10 @@ describe('Test work module', function() {
         });
     });
 
+    it('Test the static method getWork in Work', function() {
+        expect(Work.getWork()).to.be.instanceOf(Work);
+    });
+
     it('Test the method addAction in Work', function(done) {
         const result: number[] = [];
         Work.getWork().addAction(async (data: ActionDeliveryData) => {
@@ -41,8 +45,7 @@ describe('Test work module', function() {
             const count = data.getData('test.count');
             data.returnData = { count: count + 1 };
         });
-        const work: Work = new Work();
-        work.addAction(action1).addAction(action2).start().then((result) => {
+        Work.getWork().addAction(action1).addAction(action2).start().then((result) => {
             const { count } = result;
             expect(count).to.be.equal(1);
             done();
@@ -54,7 +57,7 @@ describe('Test work module', function() {
         const action: Action = new Action(async (data: ActionDeliveryData) => {
             result.push(data.startData);
         });
-        new Work().addAction(action).start(0).then(() => {
+        Work.getWork().addAction(action).start(0).then(() => {
             expect(result).to.be.deep.equal([0]);
             done();
         });
@@ -69,8 +72,7 @@ describe('Test work module', function() {
             data.returnData = { path: data.path };
         });
         ids.push(action2.id);
-        const work: Work = new Work();
-        work.addAction(action1).addAction(action2).start().then((result) => {
+        Work.getWork().addAction(action1).addAction(action2).start().then((result) => {
             const { path } = result;
             expect(path).to.deep.equal(ids);
             done();
@@ -85,7 +87,7 @@ describe('Test work module', function() {
         const action2: Action = new Action(async (data: ActionDeliveryData) => {
             result.push(data.pathIndex);
         });
-        new Work().addAction(action1).addAction(action2).start().then(() => {
+        Work.getWork().addAction(action1).addAction(action2).start().then(() => {
             expect(result).to.be.deep.equal([0, 1]);
             done();
         });
@@ -103,14 +105,14 @@ describe('Test work module', function() {
             expect(data.prevData).to.be.equal(1);
             done();
         });
-        new Work().addAction(action1).addAction(action2).addAction(action3).start();
+        Work.getWork().addAction(action1).addAction(action2).addAction(action3).start();
     });
 
     it('Test returnData in delivery data', function(done) {
         const action: Action = new Action(async (data: ActionDeliveryData) => {
             data.returnData = 1;
         });
-        new Work().addAction(action).start().then((result) => {
+        Work.getWork().addAction(action).start().then((result) => {
             expect(result).to.be.equal(1);
             done();
         });
@@ -133,7 +135,7 @@ describe('Test work module', function() {
                 key = true;
             }
         });
-        new Work().addAction(action1).addAction(action2).addAction(action3).start().then((result) => {
+        Work.getWork().addAction(action1).addAction(action2).addAction(action3).start().then((result) => {
             expect(arr).to.deep.equal([0, 2, 1, 2]);
             done();
         });
@@ -160,7 +162,7 @@ describe('Test work module', function() {
         }, {
             anchor: 'anchor2'
         });
-        new Work().addAction(action1).addAction(action2).addAction(action3).start().then((result) => {
+        Work.getWork().addAction(action1).addAction(action2).addAction(action3).start().then((result) => {
             expect(arr).to.deep.equal([0, 2, 1, 2]);
             done();
         });

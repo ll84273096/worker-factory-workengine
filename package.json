@@ -51,6 +51,7 @@
     "webpack-cli": "^3.3.2"
   },
   "dependencies": {
+    "@sindresorhus/is": "^1.0.0",
     "dot-prop": "^5.1.0",
     "events": "^3.0.0",
     "extend": "^3.0.2",
@@ -60,5 +61,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }

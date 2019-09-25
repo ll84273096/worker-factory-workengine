@@ -22,6 +22,8 @@ class Action {
     private _id: string;
 
     constructor(runner: IRunner, options: IActionOptions = DEFAULT_OPTIONS) {
+        // console.log('-->', Object.prototype.toString.call(runner));
+        Object.prototype.toString.call(runner);
         this._runner = runner;
         this.options = { ...DEFAULT_OPTIONS, ...options };
         this._id = uuid();
@@ -40,7 +42,10 @@ class Action {
         const arrPromise: Promise<any>[] = [];
         let result: any;
         let timeoutIndex: any;
-
+        // let promise: Promise<any> = this._promisify(this._runner)(data);
+        // if (!(promise instanceof Promise)) {
+        //     promise = Promise.resolve(promise);
+        // }
         arrPromise.push(this._runner(data));
         if (timeout > 0) {
             arrPromise.push(new Promise((resolve, reject) => {
@@ -69,6 +74,18 @@ class Action {
         }
         return result;
     }
+
+    // private _promisify(target: any): IRunner {
+    //     let promisify: () => any;
+    //     if (target instanceof Promise) {
+    //         promisify = () => target;
+    //     } else if (typeof target === 'function') {
+    //         promisify = target;
+    //     } else {
+    //         promisify = async () => target;
+    //     }
+    //     return promisify;
+    // }
 }
 
 export default Action;
