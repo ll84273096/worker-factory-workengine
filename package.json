@@ -43,7 +43,7 @@
     "eslint": "^5.16.0",
     "eslint-config-alloy": "^2.0.0-alpha.2",
     "mocha": "^6.1.4",
-    "standard-version": "^4.3.0",
+    "standard-version": "^8.0.1",
     "ts-loader": "^6.0.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.5",
